@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { playerManagerCtx } from "../App";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import IconButton from "@mui/material/IconButton";
 
@@ -34,12 +33,18 @@ function PlayerView() {
 	const [playersRanked, setPlayersRanked] = React.useState(
 		playerManager.getPlayerRankings()
 	);
-	playerManager.onUpdate(() => {
-		setPlayersRanked(playerManager.getPlayerRankings());
+	const callbackFunc = () => {
+		setPlayersRanked([...playerManager.getPlayerRankings()]);
+	};
+	useEffect(() => {
+		playerManager.onUpdate(callbackFunc);
+		return () => {
+			playerManager.clearOnUpdate(callbackFunc);
+		};
 	});
 	return (
 		<>
-			<div style={{ height: 400, width: "100%" }}>
+			<div style={{ height: 400, width: "400px" }}>
 				<DataGrid
 					rows={playersRanked}
 					columns={columns}

@@ -9,13 +9,25 @@ interface Player {
 }
 
 export class PlayerManager extends EventEmitter {
-	players: Player[];
-	record: RecordResult;
+	private players: Player[];
+	private record: RecordResult;
 
 	constructor() {
 		super();
 		this.players = [];
 		this.record = [[]];
+	}
+
+	getPlayerId(playerName: string) {
+		return this.players.findIndex(player => player.name === playerName);
+	}
+
+	getPlayer(playerId: number) {
+		return this.players[playerId];
+	}
+
+	getPlayers() {
+		return this.players;
 	}
 
 	getRecordBetween(player1: number, player2: number): RecordBetween {
@@ -28,12 +40,12 @@ export class PlayerManager extends EventEmitter {
 		recordBetween: RecordBetween
 	) {
 		const oldRecord = this.getRecordBetween(player1, player2);
-		this.record[player1][player2] = recordBetween;
+		this.record[player1][player2] = [...recordBetween];
 		this.record[player2][player1] = [recordBetween[1], recordBetween[0]];
 		this.players[player1].wins += recordBetween[0] - oldRecord[0];
-		this.players[player1].losses = recordBetween[1] - oldRecord[1];
-		this.players[player2].wins = recordBetween[1] - oldRecord[1];
-		this.players[player2].losses = recordBetween[0] - oldRecord[0];
+		this.players[player1].losses += recordBetween[1] - oldRecord[1];
+		this.players[player2].wins += recordBetween[1] - oldRecord[1];
+		this.players[player2].losses += recordBetween[0] - oldRecord[0];
 		this.emit("update");
 		return this.record;
 	}
@@ -90,5 +102,13 @@ export class PlayerManager extends EventEmitter {
 
 	onUpdate(callbackFunction: () => void) {
 		this.on("update", callbackFunction);
+	}
+
+	clearOnUpdate(callbackFunction: () => void) {
+		this.removeListener("update", callbackFunction);
+	}
+
+	getUpsetMinimizationRanking() {
+		// TODO
 	}
 }
