@@ -133,7 +133,6 @@ export class PlayerManager extends EventEmitter {
 				return player1.name.localeCompare(player2.name);
 
 			});
-			console.log(`${JSON.stringify(players)}}`);
 			const bestPlayer = players.shift() as {
 				name: string;
 				wins: number;
@@ -178,33 +177,34 @@ export class PlayerManager extends EventEmitter {
 			}
 			return player1.name.localeCompare(player2.name);
 		});
-
+		const fptCopy = [...firstPassthrough];
 		let eloPassthrough = firstPassthrough.map((player, rank) => {
-			const mmr = 1500 - (900 * (rank - 1)/(players.length - 1));
+			const mmr = 1500 - (100 * (rank - 1)/(players.length - 1));
 			let expectedScore = 0;
 			let actualScore = 0;
-			firstPassthrough.forEach((otherPlayer, otherRank) => {
+			fptCopy.forEach((otherPlayer, otherRank) => {
 				if(player.id == otherPlayer.id) {
 					return;
 				}
-				const otherMmr = 1500 - (900 * (otherRank - 1)/(players.length - 1));
+				const otherMmr = 1500 - (100 * (otherRank - 1)/(players.length - 1));
 				const recordBetween = this.getRecordBetween(player.id, otherPlayer.id);
 				const gamesPlayed = recordBetween[0] + recordBetween[1];
 				expectedScore += gamesPlayed * (1/(1 + (Math.pow(10, (otherMmr - mmr) / 400))));
 				actualScore += recordBetween[0];
 			});
-			const newMmr = mmr + 32 * (actualScore - expectedScore);
+			const newMmr = mmr + 1 * (actualScore - expectedScore);
 			return {
 				...player,
 				mmr: newMmr,
 			}
 		});
 
-		for(let i = 0; i < 5; i++) {
+		for(let i = 0; i < 3; i++) {
+			const ept = [...eloPassthrough];
 			eloPassthrough = eloPassthrough.map((player) => {
 				let expectedScore = 0;
 				let actualScore = 0;
-				eloPassthrough.forEach((otherPlayer) => {
+				ept.forEach((otherPlayer) => {
 					if(player.id == otherPlayer.id) {
 						return;
 					}
@@ -213,7 +213,7 @@ export class PlayerManager extends EventEmitter {
 					expectedScore += gamesPlayed * (1/(1 + (Math.pow(10, (otherPlayer.mmr - player.mmr) / 400))));
 					actualScore += recordBetween[0];
 				});
-				const newMmr = player.mmr + 32 * (actualScore - expectedScore);
+				const newMmr = player.mmr + 1 * (actualScore - expectedScore);
 				return {
 					...player,
 					mmr: newMmr,

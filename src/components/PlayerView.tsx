@@ -57,8 +57,8 @@ function PlayerView() {
 				<DataGrid
 					rows={playersRanked}
 					columns={columns}
-					pageSize={5}
-					rowsPerPageOptions={[5]}
+					pageSize={10}
+					rowsPerPageOptions={[5, 10, 15]}
 				/>
 			</div>
 		</>
