@@ -3,10 +3,13 @@ import React, { useContext, useEffect } from "react";
 import { playerManagerCtx } from "../App";
 import { ControlledAutocomplete } from "./ControlledAutocomplete";
 
+type strull = string | null;
+
 function MatchupDropdown() {
-	const [players, setPlayers] = React.useState<
-		[string | null, string | null]
-	>([null, null]);
+	const [players, setPlayers] = React.useState<[strull, strull]>([
+		null,
+		null,
+	]);
 	const [score, setScore] = React.useState<[number, number]>([0, 0]);
 
 	const playerManager = useContext(playerManagerCtx);
@@ -81,7 +84,6 @@ function MatchupDropdown() {
 			<Button
 				onClick={() => {
 					if (players[0] && players[1]) {
-						console.log(`${players[0]},${players[1]}`);
 						const [p1, p2] = [
 							playerManager.getPlayerId(players[0]),
 							playerManager.getPlayerId(players[1]),

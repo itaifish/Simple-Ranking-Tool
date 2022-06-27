@@ -16,7 +16,6 @@ export function ControlledAutocomplete(props: ControlledAutocompleteProps) {
 			<Autocomplete
 				value={props.value}
 				onChange={(event: any, newValue: string | null) => {
-					console.log(newValue);
 					props.onChange(newValue || "");
 				}}
 				inputValue={inputValue}
